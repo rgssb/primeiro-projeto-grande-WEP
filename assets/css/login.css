@@ -38,19 +38,252 @@ body {
   box-shadow: 0 0 60px rgba(65, 105, 225, 0.10);
 }
 
-/* "Orb" decorativo acima do título (combina com o nome Orby) */
-.Orby-form::before {
-  content: '';
-  display: block;
-  width: 44px;
-  height: 44px;
-  margin: 0 auto 24px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #C7D2FE 0%, #4169E1 55%, #1E3A8A 100%);
-  box-shadow:
-    0 0 24px rgba(65, 105, 225, 0.55),
-    0 0 60px rgba(129, 140, 248, 0.25);
+/* Mascote Orby (SVG) */
+.orby-mascot {
+  --ring-color: #4169E1;
+  --ring-glow: rgba(65, 105, 225, 0.55);
+  position: relative;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px;
+  animation: orby-float 4.5s ease-in-out infinite;
 }
+
+.orby-mascot[data-state="loading"] {
+  animation-play-state: paused;
+}
+
+/* Halo/aura: bloco próprio, centralizado atrás do SVG, sem depender de
+   filtros do SVG (que "vazavam" pra fora do elemento quando combinados
+   com transform/rotate). */
+.orby-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 92px;
+  height: 92px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, var(--ring-glow) 0%, transparent 70%);
+  filter: blur(10px);
+  transition: background 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orby-inner {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.25s ease;
+}
+
+.orby-mascot:hover .orby-inner {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+.orby-mascot svg {
+  overflow: visible;
+  display: block;
+}
+
+.orby-sparkles {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.orby-sparkles span {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #F1F5F9;
+  opacity: 0;
+}
+
+.orby-sparkles span:nth-child(1) { top: 4px; left: 12px; }
+.orby-sparkles span:nth-child(2) { top: 12px; right: 4px; }
+.orby-sparkles span:nth-child(3) { bottom: 6px; left: 50%; }
+
+.orby-body {
+  fill: #05060B;
+  stroke: rgba(129, 140, 248, 0.22);
+  stroke-width: 1;
+}
+
+.orby-ring {
+  fill: none;
+  stroke: var(--ring-color);
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke 0.4s ease;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: rotate(-20deg);
+}
+
+.orby-ring-back {
+  opacity: 0.55;
+}
+
+/* Olhos */
+.orby-sclera {
+  fill: #0B1330;
+  stroke: var(--ring-color);
+  stroke-width: 1;
+  transition: stroke 0.4s ease, opacity 0.2s ease;
+}
+
+.orby-pupil {
+  fill: var(--ring-color);
+  transition: fill 0.4s ease, transform 0.15s ease, opacity 0.2s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.orby-glint {
+  fill: #F1F5F9;
+  transition: opacity 0.2s ease;
+}
+
+.orby-lid {
+  fill: none;
+  stroke: var(--ring-color);
+  stroke-width: 3.4;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity 0.25s ease, stroke 0.4s ease;
+}
+
+.orby-mouth {
+  fill: none;
+  stroke: var(--ring-color);
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity 0.25s ease, stroke 0.4s ease;
+}
+
+/* Piscar automático (só no estado padrão e digitando email) */
+.orby-mascot[data-state="default"] .orby-lid-closed,
+.orby-mascot[data-state="typing-email"] .orby-lid-closed {
+  animation: orby-blink 5.5s ease-in-out infinite;
+}
+
+/* --- Estados --- */
+
+/* Digitando email: olhos acompanham o campo, cor mantém-se azul */
+.orby-mascot[data-state="typing-email"] {
+  --ring-color: #4169E1;
+  --ring-glow: rgba(65, 105, 225, 0.6);
+}
+
+/* Senha em foco: olhos fechados, anel roxo, leve concentração (cabeça inclinada) */
+.orby-mascot[data-state="password"] {
+  --ring-color: #A78BFA;
+  --ring-glow: rgba(167, 139, 250, 0.6);
+}
+.orby-mascot[data-state="password"] .orby-inner {
+  transform: rotate(-4deg);
+}
+.orby-mascot[data-state="password"] .orby-sclera,
+.orby-mascot[data-state="password"] .orby-pupil,
+.orby-mascot[data-state="password"] .orby-glint {
+  opacity: 0;
+}
+.orby-mascot[data-state="password"] .orby-lid-closed {
+  opacity: 1;
+}
+
+/* Sucesso: olhos e sorriso felizes, anel ciano, pulo + brilhos */
+.orby-mascot[data-state="success"] {
+  --ring-color: #22D3EE;
+  --ring-glow: rgba(34, 211, 238, 0.7);
+}
+.orby-mascot[data-state="success"] .orby-inner {
+  animation: orby-pop 0.5s ease;
+}
+.orby-mascot[data-state="success"] .orby-sclera,
+.orby-mascot[data-state="success"] .orby-pupil,
+.orby-mascot[data-state="success"] .orby-glint {
+  opacity: 0;
+}
+.orby-mascot[data-state="success"] .orby-lid-happy,
+.orby-mascot[data-state="success"] .orby-mouth-smile {
+  opacity: 1;
+}
+.orby-mascot[data-state="success"] .orby-sparkles span {
+  animation: orby-sparkle 0.9s ease forwards;
+}
+.orby-mascot[data-state="success"] .orby-sparkles span:nth-child(2) { animation-delay: 0.1s; }
+.orby-mascot[data-state="success"] .orby-sparkles span:nth-child(3) { animation-delay: 0.2s; }
+
+/* Erro: anel vermelho, olhos e boca preocupados, chacoalha */
+.orby-mascot[data-state="error"] {
+  --ring-color: #F87171;
+  --ring-glow: rgba(248, 113, 113, 0.65);
+}
+.orby-mascot[data-state="error"] .orby-inner {
+  animation: orby-shake 0.45s ease;
+}
+.orby-mascot[data-state="error"] .orby-sclera,
+.orby-mascot[data-state="error"] .orby-pupil,
+.orby-mascot[data-state="error"] .orby-glint {
+  opacity: 0;
+}
+.orby-mascot[data-state="error"] .orby-lid-worried,
+.orby-mascot[data-state="error"] .orby-mouth-worried {
+  opacity: 1;
+}
+
+/* Carregando: anéis giram, olhos ficam bem abertos e alerta */
+.orby-mascot[data-state="loading"] {
+  --ring-color: #C7D2FE;
+  --ring-glow: rgba(199, 210, 254, 0.65);
+}
+.orby-mascot[data-state="loading"] .orby-ring-back,
+.orby-mascot[data-state="loading"] .orby-ring-front {
+  animation: orby-spin 1.2s linear infinite;
+}
+.orby-mascot[data-state="loading"] .orby-pupil {
+  transform: scale(1.15);
+}
+
+@keyframes orby-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes orby-blink {
+  0%, 92%, 100% { opacity: 0; }
+  95% { opacity: 1; }
+}
+
+@keyframes orby-spin {
+  from { transform: rotate(-20deg); }
+  to { transform: rotate(340deg); }
+}
+
+@keyframes orby-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+}
+
+@keyframes orby-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+@keyframes orby-sparkle {
+  0% { opacity: 0; transform: scale(0.3) translateY(4px); }
+  40% { opacity: 1; transform: scale(1) translateY(-2px); }
+  100% { opacity: 0; transform: scale(0.5) translateY(-10px); }
+}
+
 
 /* Título */
 .Orby-form > span {
