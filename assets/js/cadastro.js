@@ -1,26 +1,37 @@
 
-$(`#formulario-cadastro`).on(`submit`, criarUsuario);
+document.getElementById("form-cadastro").addEventListener("submit", criarUsuario);
 
-function criarUsuario(evento) {
+async function criarUsuario(evento) {
     evento.preventDefault();
-    console.logo("Dentro da funcao go") //fmt.Println é o equivalente em Go para imprimir no console
 
-    if ($(`#senha`).val() != $(`#corfirmar-senha`).val()) {
+    const senha = document.getElementById("senha").value;
+    const confirmarSenha = document.getElementById("confirmar-senha").value;
+
+    if (senha !== confirmarSenha) {
         alert("As senhas precisam ser iguais");
         return;
     }
 
-    $.aja({
-        url: "/usuarios",
-        method: "POST",
-        data: {
-            nome: $(`#nome`).val(),
-            senha: $(`#senha`).val(),
-            email: $(`#email`).val(),
-            nick: $(`#nick`).val(),
+    const dados = new URLSearchParams({
+        nome: document.getElementById("nome").value,
+        senha: senha,
+        email: document.getElementById("email").value,
+        nick: document.getElementById("nick").value,
+    });
+
+    try {
+        const resposta = await fetch("/usuarios", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: dados,
+        });
+
+        if (!resposta.ok) {
+            throw new Error("Não foi possível cadastrar o usuário.");
         }
-})
 
-
-
+        alert("Usuário cadastrado.");
+    } catch (erro) {
+        alert(erro.message);
+    }
 }
