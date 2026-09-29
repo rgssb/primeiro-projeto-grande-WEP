@@ -1,6 +1,12 @@
 
 document.getElementById("form-cadastro").addEventListener("submit", criarUsuario);
 
+function mostrarMensagem(mensagem, sucesso) {
+    const feedback = document.getElementById("form-message");
+    feedback.textContent = mensagem;
+    feedback.classList.toggle("is-success", sucesso);
+}
+
 async function criarUsuario(evento) {
     evento.preventDefault();
 
@@ -8,7 +14,8 @@ async function criarUsuario(evento) {
     const confirmarSenha = document.getElementById("confirmar-senha").value;
 
     if (senha !== confirmarSenha) {
-        alert("As senhas precisam ser iguais");
+        window.OrbyMascot.error();
+        mostrarMensagem("As senhas precisam ser iguais.", false);
         return;
     }
 
@@ -30,8 +37,10 @@ async function criarUsuario(evento) {
             throw new Error("Não foi possível cadastrar o usuário.");
         }
 
-        alert("Usuário cadastrado.");
+        window.OrbyMascot.success();
+        mostrarMensagem("Usuário cadastrado com sucesso.", true);
     } catch (erro) {
-        alert(erro.message);
+        window.OrbyMascot.error();
+        mostrarMensagem(erro.message, false);
     }
 }

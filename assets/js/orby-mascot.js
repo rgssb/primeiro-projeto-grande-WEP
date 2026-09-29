@@ -12,11 +12,24 @@
     if (!form) return;
 
     var pupils = mascot.querySelectorAll('.orby-pupil');
+    var horizontalRings = mascot.querySelectorAll('.orby-ring-back, .orby-ring-front');
+    var orbitalRings = mascot.querySelectorAll('.orby-ring-orbit');
+    var inner = mascot.querySelector('.orby-inner');
     var textInputs = form.querySelectorAll('input[type="text"], input[type="email"]');
     var passwordInputs = form.querySelectorAll('input[type="password"]');
+    var pointerTimeout;
+    var pointerFrame;
+    var latestPointer;
+    var lastActivity = Date.now();
 
     function setState(state) {
+      mascot.classList.remove('is-blinking');
       mascot.setAttribute('data-state', state);
+    }
+
+    function markActivity() {
+      lastActivity = Date.now();
+      mascot.classList.remove('is-idle');
     }
 
     // Move os olhos levemente de acordo com o quanto o usuário já digitou,
@@ -34,15 +47,84 @@
       pupils.forEach(function (pupil) { pupil.style.transform = ''; });
     }
 
+    function followPointer(event) {
+      var state = mascot.getAttribute('data-state');
+      if (state !== 'default' && state !== 'typing-email') return;
+
+      markActivity();
+      latestPointer = event;
+      if (!pointerFrame) {
+        pointerFrame = window.requestAnimationFrame(updatePointer);
+      }
+    }
+
+    function updatePointer() {
+      pointerFrame = undefined;
+      if (!latestPointer) return;
+
+      var bounds = mascot.getBoundingClientRect();
+      var relativeX = ((latestPointer.clientX - bounds.left) / bounds.width - 0.5) * 2;
+      var relativeY = ((latestPointer.clientY - bounds.top) / bounds.height - 0.5) * 2;
+      var offsetX = Math.max(-3.2, Math.min(3.2, relativeX * 3.2));
+      var offsetY = Math.max(-1.8, Math.min(1.8, relativeY * 1.8));
+
+      pupils.forEach(function (pupil) {
+        pupil.style.transform = 'translate(' + offsetX.toFixed(1) + 'px, ' + offsetY.toFixed(1) + 'px)';
+      });
+      mascot.style.setProperty('--mouse-tilt', (relativeX * 3).toFixed(1) + 'deg');
+      mascot.classList.add('is-hovered');
+      clearTimeout(pointerTimeout);
+      pointerTimeout = setTimeout(resetPointer, 320);
+    }
+
+    function resetPointer() {
+      mascot.classList.remove('is-hovered');
+      mascot.style.removeProperty('--mouse-tilt');
+      var state = mascot.getAttribute('data-state');
+      if (state === 'default' || state === 'typing-email') resetEyes();
+    }
+
+    function reactToTap() {
+      mascot.classList.remove('is-tapped');
+      void mascot.offsetWidth;
+      mascot.classList.add('is-tapped');
+      inner.animate([
+        { transform: 'rotate(0deg) scale(1)' },
+        { transform: 'rotate(-8deg) scale(1.08)', offset: 0.3 },
+        { transform: 'rotate(8deg) scale(1.08)', offset: 0.7 },
+        { transform: 'rotate(0deg) scale(1)' }
+      ], {
+        duration: 800,
+        easing: 'ease-in-out'
+      });
+      function animateRingGroup(rings, initialAngle, direction) {
+        rings.forEach(function (ring) {
+          ring.animate([
+            { transform: 'rotate(' + initialAngle + 'deg) scale(1)' },
+            { transform: 'rotate(' + (initialAngle + direction * 170) + 'deg) scale(1.12)', offset: 0.5 },
+            { transform: 'rotate(' + (initialAngle + direction * 340) + 'deg) scale(1)' }
+          ], {
+            duration: 850,
+            easing: 'cubic-bezier(0.2, 0.8, 0.25, 1)'
+          });
+        });
+      }
+
+      animateRingGroup(horizontalRings, -20, 1);
+      animateRingGroup(orbitalRings, -10, -1);
+      setTimeout(function () { mascot.classList.remove('is-tapped'); }, 900);
+    }
+
     // Quando ninguém interage com o form, o Orby dá uma olhadinha para o
     // lado de vez em quando, sozinho, para não ficar "estático demais".
     function scheduleIdleGlance() {
       var delay = 5000 + Math.random() * 4000;
       setTimeout(function () {
         if (mascot.getAttribute('data-state') === 'default') {
-          var dir = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2);
+          var dirX = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2);
+          var dirY = (Math.random() - 0.5) * 2;
           pupils.forEach(function (pupil) {
-            pupil.style.transform = 'translateX(' + dir.toFixed(1) + 'px)';
+            pupil.style.transform = 'translate(' + dirX.toFixed(1) + 'px, ' + dirY.toFixed(1) + 'px)';
           });
           setTimeout(function () {
             if (mascot.getAttribute('data-state') === 'default') resetEyes();
@@ -53,8 +135,55 @@
     }
     scheduleIdleGlance();
 
+    function blink() {
+      var state = mascot.getAttribute('data-state');
+      if (state !== 'default' && state !== 'typing-email') return;
+
+      mascot.classList.add('is-blinking');
+      setTimeout(function () {
+        mascot.classList.remove('is-blinking');
+      }, 150);
+    }
+
+    function scheduleBlink() {
+      var delay = 2800 + Math.random() * 3000;
+      setTimeout(function () {
+        blink();
+        scheduleBlink();
+      }, delay);
+    }
+    scheduleBlink();
+    document.addEventListener('pointermove', followPointer);
+    document.addEventListener('click', function (event) {
+      if (mascot.contains(event.target)) reactToTap();
+    });
+    window.addEventListener('blur', resetPointer);
+    form.addEventListener('focusin', function () {
+      markActivity();
+      mascot.classList.add('is-form-focused');
+    });
+    form.addEventListener('focusout', function () {
+      setTimeout(function () {
+        if (!anyFieldFocused(form)) mascot.classList.remove('is-form-focused');
+      }, 0);
+    });
+    setInterval(function () {
+      if (mascot.getAttribute('data-state') === 'default' && Date.now() - lastActivity > 12000) {
+        mascot.classList.add('is-idle');
+      }
+    }, 1000);
+    form.querySelectorAll('a[href]').forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        mascot.classList.add('is-leaving');
+        setTimeout(function () { window.location.assign(link.href); }, 300);
+      });
+    });
+
     textInputs.forEach(function (input) {
       input.addEventListener('focus', function () {
+        markActivity();
         setState('typing-email');
         trackEyes(input);
       });
@@ -69,6 +198,7 @@
 
     passwordInputs.forEach(function (input) {
       input.addEventListener('focus', function () {
+        markActivity();
         setState('password');
       });
       input.addEventListener('blur', function () {
@@ -85,7 +215,7 @@
       setState: setState,
       success: function () {
         setState('success');
-        setTimeout(function () { setState('default'); }, 1600);
+        setTimeout(function () { setState('default'); }, 2200);
       },
       error: function () {
         setState('error');
@@ -96,6 +226,11 @@
 
   var mascots = document.querySelectorAll('.orby-mascot');
   mascots.forEach(initMascot);
+  mascots.forEach(function (mascot) {
+    mascot.classList.add(new Date().getHours() >= 7 && new Date().getHours() < 19 ? 'theme-day' : 'theme-night');
+    mascot.classList.add('is-welcoming');
+    setTimeout(function () { mascot.classList.remove('is-welcoming'); }, 900);
+  });
 
   // API global: aciona o(s) mascote(s) da página atual.
   //   window.OrbyMascot.success();
