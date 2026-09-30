@@ -34,7 +34,8 @@ async function criarUsuario(evento) {
         });
 
         if (!resposta.ok) {
-            throw new Error("Não foi possível cadastrar o usuário.");
+            const erro = await resposta.json();
+            throw new Error(erro.erro || "Não foi possível cadastrar o usuário.");
         }
 
         window.OrbyMascot.success();

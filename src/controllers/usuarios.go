@@ -3,10 +3,8 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-
-	"log"
 	"net/http"
+	"webapp/src/respostas"
 )
 
 const apiURL = "http://localhost:8081"
@@ -21,20 +19,21 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if erro != nil {
-		log.Fatal(erro)
-}
-
-	response, erro := http.Post("http://localhost:8081/usuarios", "aplication/json", bytes.NewBuffer(usuario))
-	if erro != nil {
-		log.Fatal(erro)
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error() })
+		return
 	}
-	
+
+	response, erro := http.Post("http://localhost:8081/usuarios", "application/json", bytes.NewBuffer(usuario))
+	if erro != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error() })
+		return
+	}
 	defer response.Body.Close()
-	
-	fmt.Println(response.Body)
 
+	if response.StatusCode >= http.StatusBadRequest {
+		respostas.TratarStatusCodeDeErro(w, response)
+		return
+	}
 
-
-
-
+	respostas.JSON(w, response.StatusCode, nil)
 }

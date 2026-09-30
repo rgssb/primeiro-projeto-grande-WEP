@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"webapp/src/respostas"
 )
 
 // RealizarLogin encaminha as credenciais para a API.
@@ -25,6 +26,11 @@ func RealizarLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer resposta.Body.Close()
+
+	if resposta.StatusCode >= http.StatusBadRequest {
+		respostas.TratarStatusCodeDeErro(w, resposta)
+		return
+	}
 
 	w.Header().Set("Content-Type", resposta.Header.Get("Content-Type"))
 	w.WriteHeader(resposta.StatusCode)
