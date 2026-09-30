@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orby - Início</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+    <link rel="stylesheet" href="/assets/css/home.css">
+</head>
+<body>
+    <main class="home-container">
+        <section class="home-card" aria-labelledby="titulo">
+            <p class="eyebrow">ORBY</p>
+            <h1 id="titulo">Login realizado com sucesso.</h1>
+            <p>Você está na página inicial.</p>
+            <button type="button" id="logout">Sair</button>
+        </section>
+    </main>
+    <script>
+        document.getElementById("logout").addEventListener("click", async () => {
+            await fetch("/logout", { method: "POST", credentials: "same-origin" });
+            window.location.assign("/login");
+        });
+    </script>
+</body>
+</html>

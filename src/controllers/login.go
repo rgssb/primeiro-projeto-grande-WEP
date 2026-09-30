@@ -4,37 +4,54 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
+	"strings"
+	"time"
 	"webapp/src/respostas"
 )
 
-// RealizarLogin encaminha as credenciais para a API.
+// RealizarLogin utiliza o email e a senha para autenticar a aplicacao
 func RealizarLogin(w http.ResponseWriter, r *http.Request) {
-	credenciais, erro := json.Marshal(map[string]string{
+	usuario, erro := json.Marshal(map[string]string{
 		"email": r.FormValue("email"),
 		"senha": r.FormValue("senha"),
 	})
 	if erro != nil {
-		http.Error(w, "Nao foi possivel preparar os dados do login.", http.StatusInternalServerError)
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
 		return
 	}
 
-	resposta, erro := http.Post(apiURL+"/login", "application/json", bytes.NewBuffer(credenciais))
+	response, erro := http.Post(apiURL+"/login", "application/json", bytes.NewBuffer(usuario))
 	if erro != nil {
-		http.Error(w, "Nao foi possivel conectar com a API.", http.StatusBadGateway)
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
 		return
 	}
-	defer resposta.Body.Close()
+	defer response.Body.Close()
 
-	if resposta.StatusCode >= http.StatusBadRequest {
-		respostas.TratarStatusCodeDeErro(w, resposta)
+	if response.StatusCode >= http.StatusBadRequest {
+		respostas.TratarStatusCodeDeErro(w, response)
 		return
 	}
 
-	w.Header().Set("Content-Type", resposta.Header.Get("Content-Type"))
-	w.WriteHeader(resposta.StatusCode)
-	if _, erro = io.Copy(w, resposta.Body); erro != nil {
-		log.Printf("erro ao copiar a resposta da API: %v", erro)
+	token, erro := io.ReadAll(response.Body)
+	if erro != nil {
+		respostas.JSON(w, http.StatusBadGateway, respostas.ErroAPI{Erro: "Não foi possível ler a resposta da API."})
+		return
 	}
+
+	if strings.TrimSpace(string(token)) == "" {
+		respostas.JSON(w, http.StatusBadGateway, respostas.ErroAPI{Erro: "A API não retornou um token de autenticação."})
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "token",
+		Value:    string(token),
+		Path:     "/",
+		Expires:  time.Now().Add(6 * time.Hour),
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Secure:   r.TLS != nil,
+	})
+	w.WriteHeader(http.StatusNoContent)
 }

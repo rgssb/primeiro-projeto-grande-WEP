@@ -1,6 +1,4 @@
 // Controla as expressões/animações do mascote Orby.
-// Funciona em qualquer tela que tenha um ".orby-mascot" dentro de um <form>,
-// reagindo automaticamente aos campos de texto/email e senha daquele form.
 (function () {
   function anyFieldFocused(form) {
     return form.contains(document.activeElement) &&

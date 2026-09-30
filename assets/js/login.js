@@ -19,14 +19,16 @@ async function realizarLogin(evento) {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: dados,
+            credentials: "same-origin",
         });
 
         if (!resposta.ok) {
-            throw new Error("E-mail ou senha incorretos.");
+            const erro = await resposta.json().catch(() => ({}));
+            throw new Error(erro.erro || "E-mail ou senha incorretos.");
         }
 
         window.OrbyMascot.success();
-        mostrarMensagem("Login realizado.", true);
+        window.location.assign("/home");
     } catch (erro) {
         window.OrbyMascot.error();
         mostrarMensagem(erro.message, false);
