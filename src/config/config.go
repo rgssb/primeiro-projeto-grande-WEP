@@ -31,6 +31,7 @@ func Carregar() {
 	if erro != nil {
 		log.Fatal(erro)
 	}
+	Porta = os.Getenv("APP_PORT")
 
 	ApiURL = os.Getenv("API_URL")
 	HashKey = []byte(os.Getenv("HASH_KEY"))
