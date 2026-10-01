@@ -187,13 +187,11 @@ body {
   stroke: var(--ring-color);
   stroke-width: 3.8;
   stroke-linecap: round;
-  filter: url(#orby-energy-texture) drop-shadow(0 0 2px var(--ring-shadow));
+  filter: drop-shadow(0 0 2px var(--ring-shadow));
   transition: stroke 0.4s ease;
   transform-box: view-box;
   transform-origin: 50% 50%;
-  transform: rotate(-20deg);
   stroke-dasharray: 3.2 1.4;
-  animation: orby-ring-drift 7.8s linear infinite;
 }
 
 .orby-ring-back {
@@ -201,13 +199,12 @@ body {
 }
 
 .orby-ring-front {
-  animation-direction: reverse;
+  opacity: 0.95;
 }
 
 .orby-ring-back,
 .orby-ring-front {
   stroke-dasharray: 1.5 1.8;
-  animation-duration: 4.2s;
 }
 
 .orby-ring-extra-1 {
@@ -215,9 +212,7 @@ body {
   stroke-width: 2.8;
   fill: none;
   opacity: 0.7;
-  filter: url(#orby-energy-texture) drop-shadow(0 0 2px var(--ring-shadow));
-  animation: orby-ring-drift 6.8s linear infinite;
-  animation-direction: reverse;
+  filter: drop-shadow(0 0 2px var(--ring-shadow));
 }
 
 .orby-ring-extra-1-front {
@@ -229,21 +224,42 @@ body {
   stroke-width: 2.5;
   fill: none;
   opacity: 0.6;
-  filter: url(#orby-energy-texture) drop-shadow(0 0 2px var(--orbit-shadow));
-  animation: orby-orbit 7.8s steps(10, jump-none) infinite;
+  filter: drop-shadow(0 0 2px var(--orbit-shadow));
 }
 
 .orby-ring-extra-2-front {
   opacity: 0.8;
 }
 
+.orby-rings-horizontal {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: orby-rotate-horizontal 8s linear infinite;
+}
+
+.orby-rings-vertical {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: orby-rotate-vertical 9s linear infinite;
+}
+
+.orby-rings-horizontal-front {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: orby-rotate-horizontal-reverse 8s linear infinite;
+}
+
+.orby-rings-vertical-front {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: orby-rotate-vertical-reverse 9s linear infinite;
+}
+
 .orby-ring-orbit {
   stroke: var(--orbit-color);
   stroke-width: 3.25;
   opacity: 0.9;
-  transform: rotate(-10deg);
-  filter: url(#orby-energy-texture) drop-shadow(0 0 3px var(--orbit-shadow));
-  animation: orby-orbit 8.4s steps(12, jump-none) infinite;
+  filter: drop-shadow(0 0 3px var(--orbit-shadow));
 }
 
 .orby-ring-orbit-back {
@@ -592,6 +608,26 @@ body {
   40% { transform: translateX(5px); }
   60% { transform: translateX(-4px); }
   80% { transform: translateX(3px); }
+}
+
+@keyframes orby-rotate-horizontal {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes orby-rotate-horizontal-reverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes orby-rotate-vertical {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes orby-rotate-vertical-reverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
 }
 
 @keyframes orby-pop {
