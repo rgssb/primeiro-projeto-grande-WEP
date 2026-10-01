@@ -3,10 +3,12 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
 	"time"
+	"webapp/src/config"
 	"webapp/src/respostas"
 )
 
@@ -20,7 +22,7 @@ func RealizarLogin(w http.ResponseWriter, r *http.Request) {
 		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
 		return
 	}
-
+	_ = fmt.Sprintf("%s/login", config.ApiURL)
 	response, erro := http.Post(apiURL+"/login", "application/json", bytes.NewBuffer(usuario))
 	if erro != nil {
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})

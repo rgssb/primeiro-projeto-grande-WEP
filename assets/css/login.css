@@ -122,12 +122,6 @@ body {
   transform: rotate(var(--mouse-tilt, 0deg)) scale(1.035);
 }
 
-.orby-mascot.is-hovered .orby-ring,
-.orby-mascot.is-hovered .orby-ring-orbit,
-.orby-mascot.is-hovered .orby-energy-wisp {
-  animation-duration: 2.4s;
-}
-
 .orby-mascot svg {
   overflow: visible;
   display: block;
@@ -188,7 +182,7 @@ body {
   stroke-width: 3.8;
   stroke-linecap: round;
   filter: drop-shadow(0 0 2px var(--ring-shadow));
-  transition: stroke 0.4s ease;
+  transition: stroke 0.4s ease, opacity 0.5s ease, filter 0.5s ease;
   stroke-dasharray: 3.2 1.4;
   transform-box: view-box;
   transform-origin: 50% 50%;
@@ -196,12 +190,10 @@ body {
 
 .orby-ring-back {
   opacity: 0.55;
-  animation: orby-rotate-sync 8s linear infinite;
 }
 
 .orby-ring-front {
   opacity: 0.95;
-  animation: orby-rotate-sync 8s linear infinite reverse;
 }
 
 .orby-ring-back,
@@ -214,7 +206,6 @@ body {
   stroke-width: 3.25;
   opacity: 0.9;
   filter: drop-shadow(0 0 3px var(--orbit-shadow));
-  animation: orby-rotate-sync 9s linear infinite;
 }
 
 .orby-ring-orbit-back {
@@ -223,11 +214,30 @@ body {
 
 .orby-ring-orbit-front {
   opacity: 0.95;
-  animation-direction: reverse;
 }
 
-.orby-ring-orbit-front {
-  opacity: 0.95;
+.orby-ring-inner {
+  stroke: var(--orbit-color);
+  stroke-width: 2;
+  stroke-dasharray: 2 2;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 3px var(--orbit-shadow));
+}
+
+.orby-ring-depth-inner {
+  stroke: var(--orbit-color);
+  stroke-width: 1.75;
+  stroke-dasharray: 1.5 2.5;
+  opacity: 0.68;
+  filter: drop-shadow(0 0 2px var(--orbit-shadow));
+}
+
+.orby-ring-depth-outer {
+  stroke: var(--ring-color);
+  stroke-width: 1.5;
+  stroke-dasharray: 1 3;
+  opacity: 0.5;
+  filter: drop-shadow(0 0 2px var(--ring-shadow));
 }
 
 .orby-energy-node {
@@ -274,7 +284,6 @@ body {
 .orby-mascot.is-idle .orby-ring,
 .orby-mascot.is-idle .orby-ring-orbit,
 .orby-mascot.is-idle .orby-energy-wisp {
-  animation-duration: 7.5s;
   opacity: 0.58;
 }
 
@@ -431,15 +440,6 @@ body {
   --ring-glow: rgba(199, 210, 254, 0.65);
   --particle-color: #C7D2FE;
 }
-.orby-mascot[data-state="loading"] .orby-ring-back,
-.orby-mascot[data-state="loading"] .orby-ring-front,
-.orby-mascot[data-state="loading"] .orby-ring-orbit {
-  animation: orby-spin 1.2s linear infinite;
-}
-.orby-mascot[data-state="loading"] .orby-ring-orbit {
-  animation-direction: reverse;
-  animation-duration: 0.85s;
-}
 .orby-mascot[data-state="loading"] .orby-pupil {
   transform: scale(1.15);
 }
@@ -529,11 +529,6 @@ body {
   50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
 }
 
-@keyframes orby-spin {
-  from { transform: rotate(-20deg); }
-  to { transform: rotate(340deg); }
-}
-
 @keyframes orby-ring-drift {
   0% { stroke-dashoffset: 0; }
   15% { stroke-dashoffset: -8; }
@@ -562,11 +557,6 @@ body {
   40% { transform: translateX(5px); }
   60% { transform: translateX(-4px); }
   80% { transform: translateX(3px); }
-}
-
-@keyframes orby-rotate-sync {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 
 @keyframes orby-pop {

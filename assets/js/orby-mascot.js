@@ -10,8 +10,7 @@
     if (!form) return;
 
     var pupils = mascot.querySelectorAll('.orby-pupil');
-    var horizontalRings = mascot.querySelectorAll('.orby-ring-back, .orby-ring-front');
-    var orbitalRings = mascot.querySelectorAll('.orby-ring-orbit');
+    var rings = mascot.querySelectorAll('.orby-ring');
     var inner = mascot.querySelector('.orby-inner');
     var textInputs = form.querySelectorAll('input[type="text"], input[type="email"]');
     var passwordInputs = form.querySelectorAll('input[type="password"]');
@@ -19,6 +18,11 @@
     var pointerFrame;
     var latestPointer;
     var lastActivity = Date.now();
+    var ringAngle = 0;
+    var ringSpeed = 26;
+    var ringFrameTime;
+    var ringBoostUntil = 0;
+    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function setState(state) {
       mascot.classList.remove('is-blinking');
@@ -29,6 +33,34 @@
       lastActivity = Date.now();
       mascot.classList.remove('is-idle');
     }
+
+    function animateRings(timestamp) {
+      if (reducedMotion) return;
+
+      var elapsed = ringFrameTime ? Math.min((timestamp - ringFrameTime) / 1000, 0.05) : 0;
+      ringFrameTime = timestamp;
+
+      var state = mascot.getAttribute('data-state');
+      var targetSpeed = state === 'loading' ? 300 :
+        mascot.classList.contains('is-hovered') ? 105 :
+          mascot.classList.contains('is-idle') ? 16 : 26;
+      if (timestamp < ringBoostUntil) targetSpeed = Math.max(targetSpeed, 170);
+
+      ringSpeed += (targetSpeed - ringSpeed) * (1 - Math.exp(-elapsed / 0.75));
+      ringAngle = (ringAngle + ringSpeed * elapsed) % 360;
+
+      var scale = 1;
+      if (timestamp < ringBoostUntil) {
+        var progress = 1 - (ringBoostUntil - timestamp) / 850;
+        scale += 0.08 * Math.sin(Math.PI * progress);
+      }
+      rings.forEach(function (ring) {
+        ring.style.transform = 'rotate(' + ringAngle.toFixed(2) + 'deg) scale(' + scale.toFixed(3) + ')';
+      });
+      window.requestAnimationFrame(animateRings);
+    }
+
+    if (!reducedMotion) window.requestAnimationFrame(animateRings);
 
     // Move os olhos levemente de acordo com o quanto o usuário já digitou,
     // dando a impressão de que o Orby está "acompanhando" o texto.
@@ -86,6 +118,7 @@
       mascot.classList.remove('is-tapped');
       void mascot.offsetWidth;
       mascot.classList.add('is-tapped');
+      ringBoostUntil = performance.now() + 850;
       inner.animate([
         { transform: 'rotate(0deg) scale(1)' },
         { transform: 'rotate(-8deg) scale(1.08)', offset: 0.3 },
@@ -95,21 +128,6 @@
         duration: 800,
         easing: 'ease-in-out'
       });
-      function animateRingGroup(rings, initialAngle, direction) {
-        rings.forEach(function (ring) {
-          ring.animate([
-            { transform: 'rotate(' + initialAngle + 'deg) scale(1)' },
-            { transform: 'rotate(' + (initialAngle + direction * 170) + 'deg) scale(1.12)', offset: 0.5 },
-            { transform: 'rotate(' + (initialAngle + direction * 340) + 'deg) scale(1)' }
-          ], {
-            duration: 850,
-            easing: 'cubic-bezier(0.2, 0.8, 0.25, 1)'
-          });
-        });
-      }
-
-      animateRingGroup(horizontalRings, -20, 1);
-      animateRingGroup(orbitalRings, -10, -1);
       setTimeout(function () { mascot.classList.remove('is-tapped'); }, 900);
     }
 
