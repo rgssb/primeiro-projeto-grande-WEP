@@ -48,7 +48,7 @@ func RealizarLogin(w http.ResponseWriter, r *http.Request) {
 		Name:     "token",
 		Value:    string(token),
 		Path:     "/",
-		Expires:  time.Now().Add(6 * time.Hour),
+		Expires:  time.Now().Add(12 * time.Hour),
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
 		Secure:   r.TLS != nil,
