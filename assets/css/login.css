@@ -70,11 +70,11 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 116px;
-  height: 116px;
+  width: 140px;
+  height: 140px;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, var(--ring-glow) 0%, transparent 70%);
-  filter: blur(18px);
+  background: radial-gradient(circle, var(--ring-glow) 0%, transparent 75%);
+  filter: blur(22px);
   transition: background 0.4s ease;
   animation: orby-glow-breathe 3.4s ease-in-out infinite;
   pointer-events: none;
@@ -210,6 +210,33 @@ body {
   animation-duration: 4.2s;
 }
 
+.orby-ring-extra-1 {
+  stroke: var(--ring-color);
+  stroke-width: 2.8;
+  fill: none;
+  opacity: 0.7;
+  filter: url(#orby-energy-texture) drop-shadow(0 0 2px var(--ring-shadow));
+  animation: orby-ring-drift 6.8s linear infinite;
+  animation-direction: reverse;
+}
+
+.orby-ring-extra-1-front {
+  opacity: 0.85;
+}
+
+.orby-ring-extra-2 {
+  stroke: var(--orbit-color);
+  stroke-width: 2.5;
+  fill: none;
+  opacity: 0.6;
+  filter: url(#orby-energy-texture) drop-shadow(0 0 2px var(--orbit-shadow));
+  animation: orby-orbit 7.8s steps(10, jump-none) infinite;
+}
+
+.orby-ring-extra-2-front {
+  opacity: 0.8;
+}
+
 .orby-ring-orbit {
   stroke: var(--orbit-color);
   stroke-width: 3.25;
@@ -307,6 +334,12 @@ body {
 .orby-glint {
   fill: #F1F5F9;
   transition: opacity 0.2s ease;
+}
+
+.orby-iris {
+  filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.6));
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .orby-lid {
