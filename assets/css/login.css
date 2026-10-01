@@ -190,6 +190,9 @@ body {
   filter: drop-shadow(0 0 2px var(--ring-shadow));
   transition: stroke 0.4s ease;
   stroke-dasharray: 3.2 1.4;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: orby-rotate-sync 8s linear infinite;
 }
 
 .orby-ring-back {
@@ -198,59 +201,12 @@ body {
 
 .orby-ring-front {
   opacity: 0.95;
+  animation-direction: reverse;
 }
 
 .orby-ring-back,
 .orby-ring-front {
   stroke-dasharray: 1.5 1.8;
-}
-
-.orby-ring-extra-1 {
-  stroke: var(--ring-color);
-  stroke-width: 2.8;
-  fill: none;
-  opacity: 0.7;
-  filter: drop-shadow(0 0 2px var(--ring-shadow));
-}
-
-.orby-ring-extra-1-front {
-  opacity: 0.85;
-}
-
-.orby-ring-extra-2 {
-  stroke: var(--orbit-color);
-  stroke-width: 2.5;
-  fill: none;
-  opacity: 0.6;
-  filter: drop-shadow(0 0 2px var(--orbit-shadow));
-}
-
-.orby-ring-extra-2-front {
-  opacity: 0.8;
-}
-
-.orby-rings-horizontal {
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  animation: orby-rotate-horizontal 8s linear infinite;
-}
-
-.orby-rings-vertical {
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  animation: orby-rotate-vertical 9s linear infinite;
-}
-
-.orby-rings-horizontal-front {
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  animation: orby-rotate-horizontal-reverse 8s linear infinite;
-}
-
-.orby-rings-vertical-front {
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  animation: orby-rotate-vertical-reverse 9s linear infinite;
 }
 
 .orby-ring-orbit {
@@ -608,24 +564,9 @@ body {
   80% { transform: translateX(3px); }
 }
 
-@keyframes orby-rotate-horizontal {
+@keyframes orby-rotate-sync {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
-}
-
-@keyframes orby-rotate-horizontal-reverse {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(-360deg); }
-}
-
-@keyframes orby-rotate-vertical {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes orby-rotate-vertical-reverse {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(-360deg); }
 }
 
 @keyframes orby-pop {
