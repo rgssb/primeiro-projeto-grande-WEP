@@ -230,26 +230,26 @@ body {
 }
 
 .orby-rings-horizontal {
-  transform-box: fill-box;
-  transform-origin: 60px 60px;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
   animation: orby-rotate-horizontal 8s linear infinite;
 }
 
 .orby-rings-vertical {
-  transform-box: fill-box;
-  transform-origin: 60px 60px;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
   animation: orby-rotate-vertical 9s linear infinite;
 }
 
 .orby-rings-horizontal-front {
-  transform-box: fill-box;
-  transform-origin: 60px 60px;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
   animation: orby-rotate-horizontal-reverse 8s linear infinite;
 }
 
 .orby-rings-vertical-front {
-  transform-box: fill-box;
-  transform-origin: 60px 60px;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
   animation: orby-rotate-vertical-reverse 9s linear infinite;
 }
 
