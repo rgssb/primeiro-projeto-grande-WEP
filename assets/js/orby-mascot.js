@@ -230,9 +230,7 @@
     setTimeout(function () { mascot.classList.remove('is-welcoming'); }, 900);
   });
 
-  // API global: aciona o(s) mascote(s) da página atual.
-  //   window.OrbyMascot.success();
-  //   window.OrbyMascot.error();
+  // API global aciona o mascote da página atual.
   window.OrbyMascot = {
     success: function () { mascots.forEach(function (m) { m.orby.success(); }); },
     error: function () { mascots.forEach(function (m) { m.orby.error(); }); },
