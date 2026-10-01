@@ -18,6 +18,7 @@
     var pointerFrame;
     var latestPointer;
     var lastActivity = Date.now();
+    var tapTimeout;
     var ringAngle = 0;
     var ringSpeed = 26;
     var ringFrameTime;
@@ -44,15 +45,15 @@
       var targetSpeed = state === 'loading' ? 300 :
         mascot.classList.contains('is-hovered') ? 105 :
           mascot.classList.contains('is-idle') ? 16 : 26;
-      if (timestamp < ringBoostUntil) targetSpeed = Math.max(targetSpeed, 170);
+      if (timestamp < ringBoostUntil) targetSpeed = Math.max(targetSpeed, 80);
 
       ringSpeed += (targetSpeed - ringSpeed) * (1 - Math.exp(-elapsed / 0.75));
       ringAngle = (ringAngle + ringSpeed * elapsed) % 360;
 
       var scale = 1;
       if (timestamp < ringBoostUntil) {
-        var progress = 1 - (ringBoostUntil - timestamp) / 850;
-        scale += 0.08 * Math.sin(Math.PI * progress);
+        var progress = 1 - (ringBoostUntil - timestamp) / 1450;
+        scale += 0.05 * Math.sin(Math.PI * progress);
       }
       rings.forEach(function (ring) {
         ring.style.transform = 'rotate(' + ringAngle.toFixed(2) + 'deg) scale(' + scale.toFixed(3) + ')';
@@ -115,20 +116,21 @@
     }
 
     function reactToTap() {
+      clearTimeout(tapTimeout);
       mascot.classList.remove('is-tapped');
       void mascot.offsetWidth;
       mascot.classList.add('is-tapped');
-      ringBoostUntil = performance.now() + 850;
+      ringBoostUntil = performance.now() + 1450;
       inner.animate([
         { transform: 'rotate(0deg) scale(1)' },
-        { transform: 'rotate(-8deg) scale(1.08)', offset: 0.3 },
-        { transform: 'rotate(8deg) scale(1.08)', offset: 0.7 },
+        { transform: 'rotate(-6deg) scale(1.05)', offset: 0.3 },
+        { transform: 'rotate(6deg) scale(1.05)', offset: 0.7 },
         { transform: 'rotate(0deg) scale(1)' }
       ], {
-        duration: 800,
+        duration: 1500,
         easing: 'ease-in-out'
       });
-      setTimeout(function () { mascot.classList.remove('is-tapped'); }, 900);
+      tapTimeout = setTimeout(function () { mascot.classList.remove('is-tapped'); }, 1600);
     }
 
     // Quando ninguém interage com o form, o Orby dá uma olhadinha para o
