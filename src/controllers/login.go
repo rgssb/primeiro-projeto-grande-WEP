@@ -4,11 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"strings"
-	"time"
 	"webapp/src/config"
+	"webapp/src/cookies"
+	"webapp/src/modelos"
 	"webapp/src/respostas"
 )
 
@@ -22,8 +21,8 @@ func RealizarLogin(w http.ResponseWriter, r *http.Request) {
 		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
 		return
 	}
-	_ = fmt.Sprintf("%s/login", config.ApiURL)
-	response, erro := http.Post(apiURL+"/login", "application/json", bytes.NewBuffer(usuario))
+	url := fmt.Sprintf("%s/login", config.ApiURL)
+	response, erro := http.Post(url, "application/json", bytes.NewBuffer(usuario))
 	if erro != nil {
 		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
 		return
@@ -35,25 +34,16 @@ func RealizarLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, erro := io.ReadAll(response.Body)
-	if erro != nil {
-		respostas.JSON(w, http.StatusBadGateway, respostas.ErroAPI{Erro: "Não foi possível ler a resposta da API."})
+	var dadosAutenticacao modelos.DadosAutenticacao
+	if erro = json.NewDecoder(response.Body).Decode(&dadosAutenticacao); erro != nil {
+		respostas.JSON(w, http.StatusUnprocessableEntity, respostas.ErroAPI{Erro: erro.Error()})
 		return
 	}
 
-	if strings.TrimSpace(string(token)) == "" {
-		respostas.JSON(w, http.StatusBadGateway, respostas.ErroAPI{Erro: "A API não retornou um token de autenticação."})
+	if erro = cookies.Salvar(w, dadosAutenticacao.ID, dadosAutenticacao.Token); erro != nil {
+		respostas.JSON(w, http.StatusUnprocessableEntity, respostas.ErroAPI{Erro: erro.Error()})
 		return
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "token",
-		Value:    string(token),
-		Path:     "/",
-		Expires:  time.Now().Add(12 * time.Hour),
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-		Secure:   r.TLS != nil,
-	})
-	w.WriteHeader(http.StatusNoContent)
+	respostas.JSON(w, http.StatusOK, nil)
 }

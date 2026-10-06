@@ -9,12 +9,29 @@ import (
 
 var s *securecookie.SecureCookie
 
-//Configurar utiliza as variaveis de ambiente paraa criacao de SecureCookie
+// Configurar utiliza as variaveis de ambiente paraa criacao de SecureCookie
 func Configurar() {
 	s = securecookie.New(config.HashKey, config.BlockKey)
 }
 
-//Salvar registra as informacoes de autenticacao
+// Salvar registra as informações de autenticação
 func Salvar(w http.ResponseWriter, ID, token string) error {
-	
+	dados := map[string]string{
+		"id":    ID,
+		"token": token,
+	}
+
+	dadosCodificados, erro := s.Encode("dados", dados)
+	if erro != nil {
+		return erro
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "dados",
+		Value:    dadosCodificados,
+		Path:     "/",
+		HttpOnly: true,
+	})
+
+	return nil
 }

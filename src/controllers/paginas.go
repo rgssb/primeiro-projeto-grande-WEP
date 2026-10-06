@@ -15,27 +15,19 @@ func CarregarPaginaDeCadastroDeUsuario(w http.ResponseWriter, r *http.Request) {
 	utils.ExecutarTemplate(w, "cadastro.html", nil)
 }
 
-// CarregarPaginaHome exibe a página inicial para uma sessão autenticada.
+// CarregarPaginaHome exibe a página inicial.
 func CarregarPaginaHome(w http.ResponseWriter, r *http.Request) {
-	cookie, erro := r.Cookie("token")
-	if erro != nil || cookie.Value == "" {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
 	utils.ExecutarTemplate(w, "home.html", nil)
 }
 
-// Sair encerra a sessão removendo o token armazenado no navegador.
+// Sair encerra a sessão removendo o cookie de autenticação.
 func Sair(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     "token",
+		Name:     "dados",
 		Value:    "",
 		Path:     "/",
-		MaxAge:   -1,
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-		Secure:   r.TLS != nil,
+		MaxAge:   -1,
 	})
 	w.WriteHeader(http.StatusNoContent)
 }
