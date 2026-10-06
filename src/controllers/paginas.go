@@ -31,3 +31,8 @@ func Sair(w http.ResponseWriter, r *http.Request) {
 	})
 	w.WriteHeader(http.StatusNoContent)
 }
+
+//CarregarPaginaPrincipal carrega a pagina principal com as publicacoes
+func CarregarPaginaPrincipal(w http.ResponseWriter, r*http.Request) {
+	utils.ExecutarTemplate(w, "home.html", nil)
+}
