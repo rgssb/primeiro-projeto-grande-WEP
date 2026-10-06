@@ -25,12 +25,6 @@ var rotasLogin = []Rota{
 		RequerAutenticacao: false,
 	},
 	{
-		URI:                "/home",
-		Metodo:             http.MethodGet,
-		Funcao:             controllers.CarregarPaginaHome,
-		RequerAutenticacao: false,
-	},
-	{
 		URI:                "/logout",
 		Metodo:             http.MethodPost,
 		Funcao:             controllers.Sair,

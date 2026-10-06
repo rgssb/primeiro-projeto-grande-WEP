@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"webapp/src/config"
 	"webapp/src/cookies"
 	"webapp/src/modelos"
@@ -37,6 +38,11 @@ func RealizarLogin(w http.ResponseWriter, r *http.Request) {
 	var dadosAutenticacao modelos.DadosAutenticacao
 	if erro = json.NewDecoder(response.Body).Decode(&dadosAutenticacao); erro != nil {
 		respostas.JSON(w, http.StatusUnprocessableEntity, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	if strings.TrimSpace(dadosAutenticacao.ID) == "" || strings.TrimSpace(dadosAutenticacao.Token) == "" {
+		respostas.JSON(w, http.StatusBadGateway, respostas.ErroAPI{Erro: "A API não retornou o ID e o token de autenticação."})
 		return
 	}
 
