@@ -26,18 +26,6 @@ func CarregarPaginaHome(w http.ResponseWriter, r *http.Request) {
 	utils.ExecutarTemplate(w, "home.html", nil)
 }
 
-// Sair encerra a sessão removendo o cookie de autenticação.
-func Sair(w http.ResponseWriter, r *http.Request) {
-	http.SetCookie(w, &http.Cookie{
-		Name:     "dados",
-		Value:    "",
-		Path:     "/",
-		HttpOnly: true,
-		MaxAge:   -1,
-	})
-	w.WriteHeader(http.StatusNoContent)
-}
-
 // CarregarPaginaPrincipal carrega a pagina principal com as publicacoes
 func CarregarPaginaPrincipal(w http.ResponseWriter, r *http.Request) {
 	dados, erro := cookies.Ler(r)

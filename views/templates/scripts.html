@@ -1,0 +1,27 @@
+{{define "scripts"}}
+    <script src="/assets/js/jquery.js"></script>
+    <script src="/assets/js/popper.js"></script>
+    <script src="/assets/js/bootstrap.js"></script>
+    <script>
+        const navbarToggle = document.querySelector(".navbar-toggler");
+        const navbarMenu = document.getElementById("navbarTogglerDemo02");
+        navbarToggle.addEventListener("click", () => {
+            const expanded = navbarToggle.getAttribute("aria-expanded") === "true";
+            navbarToggle.setAttribute("aria-expanded", String(!expanded));
+            navbarMenu.classList.toggle("show", !expanded);
+        });
+
+        const searchToggle = document.querySelector(".navbar-search-toggle");
+        const searchInput = document.getElementById("navbar-search-input");
+        searchToggle.addEventListener("click", () => {
+            const expanded = searchToggle.getAttribute("aria-expanded") === "true";
+            searchToggle.setAttribute("aria-expanded", String(!expanded));
+            searchToggle.setAttribute("aria-label", expanded ? "Abrir pesquisa" : "Fechar pesquisa");
+            searchInput.hidden = expanded;
+            if (!expanded) {
+                searchInput.focus();
+            }
+        });
+
+    </script>
+{{end}}
