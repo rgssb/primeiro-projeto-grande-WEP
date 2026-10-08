@@ -1,7 +1,13 @@
 package controllers
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"webapp/src/config"
+	"webapp/src/cookies"
+	"webapp/src/modelos"
+	"webapp/src/respostas"
 	"webapp/src/utils"
 )
 
@@ -32,7 +38,39 @@ func Sair(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-//CarregarPaginaPrincipal carrega a pagina principal com as publicacoes
-func CarregarPaginaPrincipal(w http.ResponseWriter, r*http.Request) {
-	utils.ExecutarTemplate(w, "home.html", nil)
+// CarregarPaginaPrincipal carrega a pagina principal com as publicacoes
+func CarregarPaginaPrincipal(w http.ResponseWriter, r *http.Request) {
+	dados, erro := cookies.Ler(r)
+	if erro != nil {
+		respostas.JSON(w, http.StatusUnauthorized, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	url := fmt.Sprintf("%s/publicacoes", config.ApiURL)
+	requisicao, erro := http.NewRequestWithContext(r.Context(), http.MethodGet, url, nil)
+	if erro != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+	requisicao.Header.Set("Authorization", "Bearer "+dados["token"])
+
+	response, erro := http.DefaultClient.Do(requisicao)
+	if erro != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	defer response.Body.Close()
+
+	if response.StatusCode >= http.StatusBadRequest {
+		respostas.TratarStatusCodeDeErro(w, response)
+		return
+	}
+
+	var publicacoes []modelos.Publicacao
+	if erro = json.NewDecoder(response.Body).Decode(&publicacoes); erro != nil {
+		respostas.JSON(w, http.StatusUnprocessableEntity, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+	utils.ExecutarTemplate(w, "home.html", publicacoes)
 }
