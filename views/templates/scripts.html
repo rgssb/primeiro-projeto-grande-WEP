@@ -13,13 +13,28 @@
 
         const searchToggle = document.querySelector(".navbar-search-toggle");
         const searchInput = document.getElementById("navbar-search-input");
+        const searchForm = searchToggle.closest(".navbar-search");
+
+        function setSearchOpen(open) {
+            searchForm.classList.toggle("is-open", open);
+            searchToggle.setAttribute("aria-expanded", String(open));
+            searchToggle.setAttribute("aria-label", open ? "Fechar pesquisa" : "Abrir pesquisa");
+            searchInput.setAttribute("aria-hidden", String(!open));
+            searchInput.tabIndex = open ? 0 : -1;
+            searchInput.disabled = !open;
+
+            if (open) {
+                requestAnimationFrame(() => searchInput.focus());
+            }
+        }
+
         searchToggle.addEventListener("click", () => {
-            const expanded = searchToggle.getAttribute("aria-expanded") === "true";
-            searchToggle.setAttribute("aria-expanded", String(!expanded));
-            searchToggle.setAttribute("aria-label", expanded ? "Abrir pesquisa" : "Fechar pesquisa");
-            searchInput.hidden = expanded;
-            if (!expanded) {
-                searchInput.focus();
+            setSearchOpen(!searchForm.classList.contains("is-open"));
+        });
+
+        document.addEventListener("click", (event) => {
+            if (!searchForm.contains(event.target) && searchForm.classList.contains("is-open")) {
+                setSearchOpen(false);
             }
         });
 

@@ -5,12 +5,13 @@
         <title>Cadastro de Usuário</title>
         <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
 
-        <link rel="stylesheet" type="text/css" href="/assets/css/login.css">
+        <link rel="stylesheet" href="/assets/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="/assets/css/login.css?v=3">
 </head>
  <body>
  <div class="login-container">
         <div>
-            <form class="Orby-form" id="form-cadastro">
+            <form class="Orby-form needs-validation" id="form-cadastro" novalidate>
                 <div class="orby-mascot" id="orbyMascot" data-state="default" aria-hidden="true">
                     <div class="orby-glow"></div>
                     <div class="orby-inner">
@@ -89,28 +90,67 @@
                     </div>
                 </div>
                 <span>Crie sua conta agora!</span>
-                <div>
-                    <input type="text" name="name" id="nome" placeholder="Digite o seu nome" required>
+                <div class="form-group">
+                    <label class="sr-only" for="nome">Nome</label>
+                    <input class="form-control" type="text" name="name" id="nome" placeholder="Digite o seu nome" autocomplete="name" aria-describedby="nome-feedback" required>
+                    <div class="invalid-feedback" id="nome-feedback">Digite seu nome.</div>
                 </div>
-                <div>
-                    <input type="text" name="email" id="email" placeholder="Digite o seu email" required>
+                <div class="form-group">
+                    <label class="sr-only" for="email">E-mail</label>
+                    <input class="form-control" type="email" name="email" id="email" placeholder="Digite o seu email" autocomplete="email" aria-describedby="email-feedback" required>
+                    <div class="invalid-feedback" id="email-feedback">Digite um e-mail válido.</div>
                 </div>
-                <div>
-                    <input type="text" name="nick" id="nick" placeholder="Digite o seu nick" required>
+                <div class="form-group">
+                    <label class="sr-only" for="nick">Nick</label>
+                    <input class="form-control" type="text" name="nick" id="nick" placeholder="Digite o seu nick" autocomplete="nickname" aria-describedby="nick-feedback" required>
+                    <div class="invalid-feedback" id="nick-feedback">Digite seu nick.</div>
                 </div>
-                <div>
-                    <input type="password" name="senha" id="senha" placeholder="Digite a sua senha" required>
+                <div class="form-group">
+                    <label class="sr-only" for="senha">Senha</label>
+                    <div class="input-group password-field">
+                        <input class="form-control" type="password" name="senha" id="senha" placeholder="Digite a sua senha" autocomplete="new-password" aria-describedby="senha-feedback" required>
+                        <button class="btn password-toggle" type="button" data-password-toggle aria-label="Mostrar senha" aria-pressed="false" aria-controls="senha">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <g class="password-eye-open">
+                                    <path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </g>
+                                <g class="password-eye-closed">
+                                    <path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Z"></path>
+                                    <path d="m3 3 18 18"></path>
+                                </g>
+                            </svg>
+                        </button>
+                        <div class="invalid-feedback" id="senha-feedback">Digite sua senha.</div>
+                    </div>
                 </div>
-                <div>
-                    <input type="password" name="confirmar-senha" id="confirmar-senha" placeholder="Confirme a sua senha" required>
+                <div class="form-group">
+                    <label class="sr-only" for="confirmar-senha">Confirme a senha</label>
+                    <div class="input-group password-field">
+                        <input class="form-control" type="password" name="confirmar-senha" id="confirmar-senha" placeholder="Confirme a sua senha" autocomplete="new-password" aria-describedby="confirmar-senha-feedback" required>
+                        <button class="btn password-toggle" type="button" data-password-toggle aria-label="Mostrar senha" aria-pressed="false" aria-controls="confirmar-senha">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <g class="password-eye-open">
+                                    <path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </g>
+                                <g class="password-eye-closed">
+                                    <path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Z"></path>
+                                    <path d="m3 3 18 18"></path>
+                                </g>
+                            </svg>
+                        </button>
+                        <div class="invalid-feedback" id="confirmar-senha-feedback">Preencha a confirmação e confira se as senhas são iguais.</div>
+                    </div>
                 </div>
-                <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
+                <div class="alert form-message" id="form-message" role="alert" aria-live="polite" hidden></div>
                 <a href="/login">Clique aqui para realizar o Login</a>
-                <button type="submit" class="btn-Orby">Cadastrar</button>
+                <button type="submit" class="btn btn-primary btn-Orby">Cadastrar</button>
             </form>
         </div>
 
     <script src="/assets/js/orby-mascot.js"></script>
+    <script src="/assets/js/password-toggle.js"></script>
     <script src="/assets/js/jquery.js"></script> 
     <script src="/assets/js/cadastro.js"></script>
     </body>

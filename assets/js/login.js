@@ -1,13 +1,23 @@
-document.getElementById("login").addEventListener("submit", realizarLogin);
+const formularioLogin = document.getElementById("login");
+formularioLogin.addEventListener("submit", realizarLogin);
 
 function mostrarMensagem(mensagem, sucesso) {
     const feedback = document.getElementById("form-message");
     feedback.textContent = mensagem;
-    feedback.classList.toggle("is-success", sucesso);
+    feedback.hidden = !mensagem;
+    feedback.classList.toggle("alert-success", sucesso);
+    feedback.classList.toggle("alert-danger", !sucesso);
 }
 
 async function realizarLogin(evento) {
     evento.preventDefault();
+
+    formularioLogin.classList.add("was-validated");
+    if (!formularioLogin.checkValidity()) {
+        window.OrbyMascot.error();
+        formularioLogin.querySelector(":invalid").focus();
+        return;
+    }
 
     const dados = new URLSearchParams({
         email: document.getElementById("email").value,

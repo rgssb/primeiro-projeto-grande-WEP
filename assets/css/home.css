@@ -56,13 +56,26 @@ h1 {
 }
 
 .navbar .form-inline .form-control {
-  width: auto;
-  min-width: 12rem;
-  flex: 1 1 auto;
+  width: 0;
+  min-width: 0;
+  max-width: 0;
+  flex: 0 0 0;
+  padding: 0;
+  border-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: width 220ms ease, max-width 220ms ease, padding 220ms ease, border-width 220ms ease, opacity 160ms ease, visibility 0s linear 220ms;
 }
 
-.navbar-search .form-control[hidden] {
-  display: none;
+.navbar .navbar-search.is-open .form-control {
+  width: 12rem;
+  max-width: 12rem;
+  flex: 1 1 12rem;
+  padding: 0.375rem 0.75rem;
+  border-width: 1px;
+  opacity: 1;
+  visibility: visible;
+  transition: width 220ms ease, max-width 220ms ease, padding 220ms ease, border-width 220ms ease, opacity 160ms ease, visibility 0s;
 }
 
 .navbar .form-inline .btn {
@@ -92,6 +105,11 @@ h1 {
   stroke: currentColor;
   stroke-linecap: round;
   stroke-width: 2;
+  transition: transform 220ms ease;
+}
+
+.navbar .navbar-search.is-open .navbar-search-toggle svg {
+  transform: rotate(90deg);
 }
 
 .navbar .navbar-logout {
@@ -131,13 +149,15 @@ h1 {
     margin: 0;
   }
 
-  .navbar-expand-lg .navbar-search .form-control {
-    min-width: 0;
-    width: 12rem;
-  }
-
   .navbar .navbar-logout {
     margin: 0.5rem 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar .navbar-search .form-control,
+  .navbar .navbar-search-toggle svg {
+    transition: none;
   }
 }
 

@@ -1,24 +1,38 @@
 
-document.getElementById("form-cadastro").addEventListener("submit", criarUsuario);
+const formularioCadastro = document.getElementById("form-cadastro");
+const senhaCadastro = document.getElementById("senha");
+const confirmarSenhaCadastro = document.getElementById("confirmar-senha");
+formularioCadastro.addEventListener("submit", criarUsuario);
+
+function validarConfirmacaoSenha() {
+    const senhasDiferentes = confirmarSenhaCadastro.value !== "" &&
+        senhaCadastro.value !== confirmarSenhaCadastro.value;
+    confirmarSenhaCadastro.setCustomValidity(senhasDiferentes ? "As senhas precisam ser iguais." : "");
+}
+
+senhaCadastro.addEventListener("input", validarConfirmacaoSenha);
+confirmarSenhaCadastro.addEventListener("input", validarConfirmacaoSenha);
 
 function mostrarMensagem(mensagem, sucesso) {
     const feedback = document.getElementById("form-message");
     feedback.textContent = mensagem;
-    feedback.classList.toggle("is-success", sucesso);
+    feedback.hidden = !mensagem;
+    feedback.classList.toggle("alert-success", sucesso);
+    feedback.classList.toggle("alert-danger", !sucesso);
 }
 
 async function criarUsuario(evento) {
     evento.preventDefault();
 
-    const senha = document.getElementById("senha").value;
-    const confirmarSenha = document.getElementById("confirmar-senha").value;
-
-    if (senha !== confirmarSenha) {
+    validarConfirmacaoSenha();
+    formularioCadastro.classList.add("was-validated");
+    if (!formularioCadastro.checkValidity()) {
         window.OrbyMascot.error();
-        mostrarMensagem("As senhas precisam ser iguais.", false);
+        formularioCadastro.querySelector(":invalid").focus();
         return;
     }
 
+    const senha = senhaCadastro.value;
     const dados = new URLSearchParams({
         nome: document.getElementById("nome").value,
         senha: senha,

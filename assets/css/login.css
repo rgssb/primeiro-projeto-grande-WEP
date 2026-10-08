@@ -648,18 +648,131 @@ input:focus {
   box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.15);
 }
 
+.Orby-form input.form-control {
+  width: 100%;
+  height: 50px;
+  padding: 0 16px;
+  margin-bottom: 0;
+  color: #F1F5F9;
+  background-color: #111827;
+  border: 1px solid #1E293B;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+.Orby-form input.form-control::placeholder {
+  color: #64748B;
+  opacity: 1;
+}
+
+.Orby-form input.form-control:focus {
+  color: #F1F5F9;
+  background-color: #111827;
+  border-color: #4169E1;
+  box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.15);
+}
+
+.Orby-form .password-field > input.form-control {
+  width: 1%;
+  border-radius: 12px 0 0 12px;
+}
+
+.Orby-form .form-group {
+  margin-bottom: 14px;
+}
+
+.Orby-form .form-group > .form-control,
+.password-field .form-control {
+  margin-bottom: 0;
+}
+
+.password-field {
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.password-field .password-toggle {
+  display: inline-flex;
+  flex: 0 0 50px;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  min-width: 50px;
+  max-width: 50px;
+  height: 50px;
+  padding: 0;
+  color: #94A3B8;
+  background: #111827;
+  border: 1px solid #1E293B;
+  border-radius: 0 12px 12px 0;
+  box-shadow: none;
+}
+
+.password-field .password-toggle:hover,
+.password-field .password-toggle:focus {
+  color: #A5B4FC;
+  background: #111827;
+  border-color: #4169E1;
+  box-shadow: none;
+  transform: none;
+}
+
+.password-field .password-toggle:focus-visible {
+  outline: 2px solid #4169E1;
+  outline-offset: 2px;
+}
+
+.password-field .password-toggle svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.password-eye-open {
+  display: none;
+}
+
+.password-eye-closed {
+  display: block;
+}
+
+.password-toggle[aria-pressed="true"] .password-eye-open {
+  display: block;
+}
+
+.password-toggle[aria-pressed="true"] .password-eye-closed {
+  display: none;
+}
+
+.password-field .invalid-feedback {
+  flex-basis: 100%;
+  order: 1;
+}
+
 .form-message {
-  min-height: 20px;
   margin: 2px 0 4px;
   color: #FDA4AF;
   font-size: 13px;
   font-weight: 600;
   line-height: 1.45;
   text-align: center;
+  background-color: #25131B;
+  border-color: #7F1D3A;
 }
 
-.form-message.is-success {
+.form-message.alert-success {
   color: #67E8C5;
+  background-color: #10261F;
+  border-color: #1F6F54;
+}
+
+.form-message[hidden] {
+  display: none;
 }
 
 /* Link de cadastro */
@@ -679,8 +792,8 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Botão */
-button {
+/* Botão principal */
+.btn-Orby {
   width: 100%;
   height: 50px;
   background: linear-gradient(135deg, #4169E1, #5B7FFF);
@@ -693,11 +806,11 @@ button {
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
 
-button:hover {
+.btn-Orby:hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 24px rgba(65, 105, 225, 0.35);
 }
 
-button:active {
+.btn-Orby:active {
   transform: translateY(0);
 }
